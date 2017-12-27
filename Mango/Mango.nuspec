@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Mango.ColinKiama</id>
+    <version>0.1.0</version>
+    <authors>Colin Kiama</authors>
+    <owners>Colin Kiama</owners>
+    <licenseUrl>https://raw.githubusercontent.com/colinkiama/Mango/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/colinkiama/Mango</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>A library made to make UWP development much easier!</description>
+    <releaseNotes>First Start</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>uwp library easy useful productivity productive shortcuts</tags>
+  </metadata>
+
+  <files>
+    <!-- WinMd and IntelliSense -->
+  <file src="..\Mango\bin\Release\Mango.winmd" target="lib\uap10.0"/>
+  <file src="..\Mango\bin\Release\Mango.xml" target="lib\uap10.0"/>
+
+<!-- XAML controls -->
+
+<!-- DLLs and resources -->
+
+
+<file src="..\Mango\bin\x86\Release\Mango.pri" target="runtimes\win10-x86\native"/>
+<file src="..\Mango\bin\x64\Release\Mango.pri" target="runtimes\win10-x64\native"/>
+<file src="..\Mango\bin\ARM\Release\Mango.pri" target="runtimes\win10-arm\native"/>
+
+
+
+
+<!-- .targets -->
+<file src="Mango.targets" target="build\native"/>
+
+
+  </files>
+</package>

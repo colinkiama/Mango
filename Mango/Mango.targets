@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Mango-Platform Condition="'$(Platform)' == 'Win32'">x86</Mango-Platform>
+        <Mango-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</Mango-Platform>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
+        <Reference Include="$(MSBuildThisFileDirectory)..\..\lib\uap10.0\Mango.winmd">
+            <Implementation>Mango.dll</Implementation>
+        </Reference>
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win10-$(Mango-Platform)\native\Mango.dll" />
+    </ItemGroup>
+</Project>

@@ -165,6 +165,7 @@ namespace Mango.Fundamentals
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public event TimerEventHandler TimerTicked;
 
         #endregion
 
@@ -174,12 +175,18 @@ namespace Mango.Fundamentals
         private void _ticker_Tick(object sender, object e)
         {
            _descendingTime = _descendingTime.Subtract(Interval);
+            OnTimerTickedEvent();
 
             if (_descendingTime.Ticks == 0)
             {
                 _ticker.Stop();
                 OnRaiseTimerEndedEvent();
             }
+        }
+
+        private void OnTimerTickedEvent()
+        {
+            TimerTicked?.Invoke(this, new TimerEventArgs(false));
         }
 
         private void OnRaiseTimerEndedEvent()

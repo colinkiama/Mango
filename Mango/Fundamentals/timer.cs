@@ -177,7 +177,7 @@ namespace Mango.Fundamentals
            _descendingTime = _descendingTime.Subtract(Interval);
             OnTimerTickedEvent();
 
-            if (_descendingTime.Ticks == 0)
+            if (_descendingTime.Ticks <= 0)
             {
                 _ticker.Stop();
                 OnRaiseTimerEndedEvent();

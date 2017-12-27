@@ -1,6 +1,7 @@
 ﻿using Mango.Fundamentals;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -25,40 +26,32 @@ namespace MangoTest
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        Timer myTimer = new Timer();
-        string damn = "Boom";
+
+        Timer myTimer = new Timer(new TimeSpan(0, 0,10));
+
+       
+
+       
+        
+
       
         public MainPage()
         {
             this.InitializeComponent();
+            myTimer.TimerTicked += MyTimer_TimerTicked;
+           
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void MyTimer_TimerTicked(object sender, TimerEventArgs e)
         {
-            Timer myTimer = new Timer();
-            myTimer.TimerEnded += MyTimer_TimerEnded;
+            Debug.WriteLine(myTimer.TimeLeft);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
             myTimer.StartTimer();
-            await Task.Delay(5000); 
-            Debug.WriteLine(myTimer.TimeLeft.ToString());
-
+           
+            
         }
-
-        private void MyTimer_TimerEnded(object sender, TimerEventArgs e)
-        {
-            ShowContentDialog("Timer is done!");
-
-        }
-
-        private async void ShowContentDialog(string content)
-        {
-            await new ContentDialog { Content = content, CloseButtonText = "Close" }.ShowAsync();
-        }
-
-
-    }
-
-    public class somethingDifferent
-    {
-        public string bindToThis = "Beach";
     }
 }

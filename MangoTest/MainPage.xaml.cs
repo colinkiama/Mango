@@ -42,21 +42,38 @@ namespace MangoTest
             myTimer.TimerEnded += MyTimer_TimerEnded;
         }
 
-        private void MyTimer_TimerEnded(object sender, TimerEventArgs e)
-        {
-            myTimer.ResetTimer();
-        }
-
-        private void MyTimer_TimerTicked(object sender, TimerEventArgs e)
+        private void displayTimeLeft()
         {
             Debug.WriteLine(myTimer.TimeLeft);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void MyTimer_TimerEnded(object sender, TimerEventArgs e)
+        {
+            
+        }
+
+        private void MyTimer_TimerTicked(object sender, TimerEventArgs e)
+        {
+            displayTimeLeft();
+        }
+
+
+        private void StartTimerButton_Click(object sender, RoutedEventArgs e)
         {
             myTimer.StartTimer();
-           
-            
+            displayTimeLeft();
+        }
+
+       
+        private void RestartTimerButton_Click(object sender, RoutedEventArgs e)
+        {
+            myTimer.ResetTimer();
+            displayTimeLeft();
+        }
+
+        private void PauseTimerButton_Click(object sender, RoutedEventArgs e)
+        {
+            myTimer.PauseTimer();
         }
     }
 }

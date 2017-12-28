@@ -8,8 +8,23 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button Content="Test"
-        Click="Button_Click"
-                HorizontalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin"
+                            Value="10"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button Name="StartTimerButton"
+                Click="StartTimerButton_Click"
+                Content="Start"/>
+            <Button Name="PauseTimerButton"
+                Click="PauseTimerButton_Click"
+                Content="Pause"/>
+            <Button Name="ResetTimerButton"
+                Click="RestartTimerButton_Click"
+                Content="Restart"/>
+        </StackPanel>
     </Grid>
 </Page>

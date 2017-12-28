@@ -160,28 +160,8 @@ namespace Mango.Fundamentals
 
       
 
-        /// <summary>
-        /// Stops the timer
-        /// </summary>
-        public void StopTimer()
-        {
-            _ticker.Stop();
-            OnTimerStoppedEvent();
-            
-        }
-
-        /// <summary>
-        /// Set the interval of the timer. The lower the value of the Time Span is, the more frequently the "Time Left" value will be updated.
-        /// </summary>
-        /// <param name="interval"></param>
-        public void SetTimerInterval(TimeSpan interval)
-        {
-            _ticker.Interval = interval;
-            Interval = interval;
-        }
 
        
-
         /// <summary>
         /// <para>
         /// Change how often the timer updates
@@ -203,7 +183,6 @@ namespace Mango.Fundamentals
         /// </summary>
         public event TimerEventHandler TimerEnded;
 
-        public event TimerEventHandler TimerStopped;
 
         public event TimerEventHandler TimerTicked;
 
@@ -257,11 +236,6 @@ namespace Mango.Fundamentals
         private void OnTimerPausedEvent()
         {
             TimerPaused?.Invoke(this, new TimerEventArgs(_timerHasEnded));
-        }
-
-        private void OnTimerStoppedEvent()
-        {
-            TimerStopped?.Invoke(this, new TimerEventArgs(_timerHasEnded));
         }
 
         private void OnPropertyChanged(string name)

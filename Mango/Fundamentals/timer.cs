@@ -16,9 +16,18 @@ namespace Mango.Fundamentals
         private DispatcherTimer _ticker = new DispatcherTimer();
         private TimeSpan _descendingTime;
         private TimeSpan _defaultTimerInterval = new TimeSpan(0, 0, 0, 0, 100);
-
+        private TimeSpan _defaultTimerDuration = new TimeSpan(0, 0, 30);
         private TimeSpan _timeLeft;
+        private bool _timerHasEnded = false;
 
+
+
+       
+
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Shows the amount of time left for the timer. The interval property determines the accuracy of
@@ -34,16 +43,6 @@ namespace Mango.Fundamentals
 
             }
         }
-
-        private void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// How long the timer will run for. Default Value is 100 milliseconds.
@@ -67,11 +66,12 @@ namespace Mango.Fundamentals
         /// </summary>
         public Timer()
         {
-            Duration = new TimeSpan(0,0,30);
-            _descendingTime = Duration;
+            _timerHasEnded = false;
             _ticker.Tick += _ticker_Tick;
+            SetTimerDuration();
             SetTimerInterval(_ticker);
         }
+
 
         /// <summary>
         ///  Create a new timer. Its default interval is 100 milliseconds.
@@ -79,9 +79,9 @@ namespace Mango.Fundamentals
         /// <param name="duration"></param>
         public Timer(TimeSpan duration)
         {
-            Duration = duration;
-            _descendingTime = Duration;
+            _timerHasEnded = false;
             _ticker.Tick += _ticker_Tick;
+            SetTimerDuration(duration);
             SetTimerInterval(_ticker);
         }
 
@@ -92,9 +92,9 @@ namespace Mango.Fundamentals
         /// <param name="interval"></param>
         public Timer(TimeSpan duration, TimeSpan interval)
         {
-            Duration = duration;
-            _descendingTime = Duration;
+            _timerHasEnded = false;
             _ticker.Tick += _ticker_Tick;
+            SetTimerDuration(duration);
             SetTimerInterval(_ticker, interval);
         }
 
@@ -104,6 +104,18 @@ namespace Mango.Fundamentals
         #region Methods
 
         
+        private void SetTimerDuration()
+        {
+            Duration = _defaultTimerDuration;
+            _descendingTime = _defaultTimerDuration;
+        }
+
+        private void SetTimerDuration(TimeSpan duration)
+        {
+            Duration = duration;
+            _descendingTime = duration;
+        }
+
         private void SetTimerInterval(DispatcherTimer ticker)
         {
             ticker.Interval = _defaultTimerInterval;
@@ -123,7 +135,19 @@ namespace Mango.Fundamentals
         public void StartTimer()
         {
             _ticker.Start();
+            _timerHasEnded = false;
+            OnTimerStartedEvent();
         }
+
+
+        public void ResetTimer()
+        {
+            _descendingTime = Duration;
+            _timerHasEnded = false;
+            OnTimerResetEvent();
+        }
+
+       
 
         /// <summary>
         /// Pauses the timer
@@ -131,16 +155,32 @@ namespace Mango.Fundamentals
         public void PauseTimer()
         {
             _ticker.Stop();
+            OnTimerPausedEvent();
         }
+
+      
 
         /// <summary>
         /// Stops the timer
         /// </summary>
         public void StopTimer()
         {
-            _ticker = new DispatcherTimer();
-            _descendingTime = Duration;
+            _ticker.Stop();
+            OnTimerStoppedEvent();
+            
         }
+
+        /// <summary>
+        /// Set the interval of the timer. The lower the value of the Time Span is, the more frequently the "Time Left" value will be updated.
+        /// </summary>
+        /// <param name="interval"></param>
+        public void SetTimerInterval(TimeSpan interval)
+        {
+            _ticker.Interval = interval;
+            Interval = interval;
+        }
+
+       
 
         /// <summary>
         /// <para>
@@ -163,10 +203,17 @@ namespace Mango.Fundamentals
         /// </summary>
         public event TimerEventHandler TimerEnded;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event TimerEventHandler TimerStopped;
 
         public event TimerEventHandler TimerTicked;
 
+        public event TimerEventHandler TimerReset;
+
+        public event TimerEventHandler TimerPaused;
+
+        public event TimerEventHandler TimerStarted;
+        
+        public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
 
@@ -179,9 +226,16 @@ namespace Mango.Fundamentals
 
             if (_descendingTime.Ticks <= 0)
             {
+                _timerHasEnded = true;
                 _ticker.Stop();
                 OnRaiseTimerEndedEvent();
+                
             }
+        }
+
+        private void OnTimerStartedEvent()
+        {
+            TimerStarted?.Invoke(this, new TimerEventArgs(_timerHasEnded));
         }
 
         private void OnTimerTickedEvent()
@@ -192,12 +246,32 @@ namespace Mango.Fundamentals
         private void OnRaiseTimerEndedEvent()
         {
             TimerEnded?.Invoke(this, new TimerEventArgs(true));
+            
+        }
+
+        private void OnTimerResetEvent()
+        {
+            TimerReset?.Invoke(this, new TimerEventArgs(_timerHasEnded));
+        }
+
+        private void OnTimerPausedEvent()
+        {
+            TimerPaused?.Invoke(this, new TimerEventArgs(_timerHasEnded));
+        }
+
+        private void OnTimerStoppedEvent()
+        {
+            TimerStopped?.Invoke(this, new TimerEventArgs(_timerHasEnded));
+        }
+
+        private void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         #endregion
 
-       
-        }
+    }
 
     public sealed class TimerEventArgs
     {

@@ -39,7 +39,12 @@ namespace MangoTest
         {
             this.InitializeComponent();
             myTimer.TimerTicked += MyTimer_TimerTicked;
-           
+            myTimer.TimerEnded += MyTimer_TimerEnded;
+        }
+
+        private void MyTimer_TimerEnded(object sender, TimerEventArgs e)
+        {
+            myTimer.ResetTimer();
         }
 
         private void MyTimer_TimerTicked(object sender, TimerEventArgs e)

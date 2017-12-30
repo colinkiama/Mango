@@ -69,7 +69,7 @@ namespace Mango.UI
         /// </summary>
         /// <param name="acrylicGlass"></param>
         /// <param name="newPageSize"></param>
-        internal static void updateAcrylicGlassSize(UIEffects acrylicGlass, Size newPageSize)
+        public void updateAcrylicGlassSize(UIEffects acrylicGlass, Size newPageSize)
         {
             if (acrylicGlass._hostSprite != null)
             {
@@ -82,39 +82,58 @@ namespace Mango.UI
         private void applyMSFTAcrylicEffect(RelativePanel transparentBox, Panel rootOfContent)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(rootOfContent).Compositor;
-            //_hostSprite = _compositor.CreateSpriteVisual();
-            //_hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            //_hostSprite.Opacity = 0.6f;
+            _hostSprite = _compositor.CreateSpriteVisual();
+            _hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            _hostSprite.Opacity = 0.8f;
+
+            //CompositionSurfaceBrush noiseBrush = _compositor.CreateSurfaceBrush();
+            //LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/acrylicNoise.png"));
+            //noiseBrush.Surface = loadedSurface;
+
+
+
+
+
+
+            _hostSprite.Brush = _compositor.CreateHostBackdropBrush();
 
             ContainerVisual containerVisual = _compositor.CreateContainerVisual();
-
-            SpriteVisual hostBackdropVisual = CreateHostBackdropVisual();
-            hostBackdropVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            containerVisual.Children.InsertAtBottom(hostBackdropVisual);
-
-
-            SpriteVisual gaussianBlurVisual = CreateGaussianBlurVisual();
-            gaussianBlurVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            containerVisual.Children.InsertAbove(gaussianBlurVisual, hostBackdropVisual);
-
-
-            SpriteVisual exclusionBlendVisual = CreateExclusionBlendVisual();
-            exclusionBlendVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            containerVisual.Children.InsertAbove(exclusionBlendVisual, gaussianBlurVisual);
-
-            SpriteVisual colorTintVisual = CreateColorTintOverlay();
-            colorTintVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            containerVisual.Children.InsertAbove(colorTintVisual, exclusionBlendVisual);
-
-            SpriteVisual acrylicNoiseVisual = CreateAcrylicNoiseVisual();
-            acrylicNoiseVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            containerVisual.Children.InsertAbove(acrylicNoiseVisual, colorTintVisual);
-
-            containerVisual.Opacity = 0.8f;
+            containerVisual.Children.InsertAtTop(_hostSprite);
             containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            containerVisual.Opacity = 0.8f;
+            containerVisual.IsVisible = true;
+           
+
+            //SpriteVisual hostBackdropVisual = CreateHostBackdropVisual();
+            //hostBackdropVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            //containerVisual.Children.InsertAtTop(hostBackdropVisual);
+
+
+            //SpriteVisual gaussianBlurVisual = CreateGaussianBlurVisual();
+            //gaussianBlurVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            //containerVisual.Children.InsertAbove(gaussianBlurVisual, hostBackdropVisual);
+
+
+            ////SpriteVisual exclusionBlendVisual = CreateExclusionBlendVisual();
+            ////exclusionBlendVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            ////containerVisual.Children.InsertAbove(exclusionBlendVisual, gaussianBlurVisual);
+
+            //SpriteVisual colorTintVisual = CreateColorTintOverlay();
+            //colorTintVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            ////containerVisual.Children.InsertAbove(colorTintVisual, exclusionBlendVisual);
+            //containerVisual.Children.InsertAbove(colorTintVisual, gaussianBlurVisual);
+
+            //SpriteVisual acrylicNoiseVisual = CreateAcrylicNoiseVisual();
+            //acrylicNoiseVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            //containerVisual.Children.InsertAbove(acrylicNoiseVisual, colorTintVisual);
+
+            //containerVisual.Opacity = 0.8f;
+            //containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
 
             //Last thing to do!!!
-            ElementCompositionPreview.SetElementChildVisual(transparentBox, containerVisual);
+
+
+            ElementCompositionPreview.SetElementChildVisual(rootOfContent, containerVisual);
 
         }
 

@@ -7,10 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.Effects;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Mango.UI
 {
@@ -34,6 +36,14 @@ namespace Mango.UI
             addTransparentBoxToGrid(rootOfContent, transparentBox);
             applyTransparentEffectToBox(transparentBox, rootOfContent);
 
+        }
+
+
+        public void createMSFTStyleAcrylicArea(Panel rootOfContent)
+        {
+            transparentBox = new RelativePanel();
+            addTransparentBoxToGrid(rootOfContent, transparentBox);
+            applyMSFTAcrylicEffect(transparentBox, rootOfContent);
         }
 
         private void applyTransparentEffectToBox(RelativePanel transparentBox, Panel rootOfContent)
@@ -72,11 +82,11 @@ namespace Mango.UI
         private void applyMSFTAcrylicEffect(RelativePanel transparentBox, Panel rootOfContent)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(rootOfContent).Compositor;
-            _hostSprite = _compositor.CreateSpriteVisual();
-            _hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            _hostSprite.Opacity = 0.6f;
+            //_hostSprite = _compositor.CreateSpriteVisual();
+            //_hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            //_hostSprite.Opacity = 0.6f;
 
-            var containerVisual = _compositor.CreateContainerVisual();
+            ContainerVisual containerVisual = _compositor.CreateContainerVisual();
 
             SpriteVisual hostBackdropVisual = CreateHostBackdropVisual();
             hostBackdropVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
@@ -92,12 +102,41 @@ namespace Mango.UI
             exclusionBlendVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
             containerVisual.Children.InsertAbove(exclusionBlendVisual, gaussianBlurVisual);
 
+            SpriteVisual colorTintVisual = CreateColorTintOverlay();
+            colorTintVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            containerVisual.Children.InsertAbove(colorTintVisual, exclusionBlendVisual);
 
+            SpriteVisual acrylicNoiseVisual = CreateAcrylicNoiseVisual();
+            acrylicNoiseVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            containerVisual.Children.InsertAbove(acrylicNoiseVisual, colorTintVisual);
 
+            containerVisual.Opacity = 0.8f;
+            containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
 
             //Last thing to do!!!
-            ElementCompositionPreview.SetElementChildVisual(transparentBox, _hostSprite);
+            ElementCompositionPreview.SetElementChildVisual(transparentBox, containerVisual);
 
+        }
+
+        private SpriteVisual CreateAcrylicNoiseVisual()
+        {
+            CompositionSurfaceBrush noiseBrush = _compositor.CreateSurfaceBrush();
+            LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/acrylicNoise.png"));
+            noiseBrush.Surface = loadedSurface;
+
+            SpriteVisual noiseVisual = _compositor.CreateSpriteVisual();
+            return noiseVisual;
+        }
+
+        private SpriteVisual CreateColorTintOverlay()
+        {
+            SpriteVisual colorVisual = _compositor.CreateSpriteVisual();
+            colorVisual.Opacity = 1f;
+
+            colorVisual.Brush  = _compositor.CreateColorBrush(Colors.Blue);
+
+            return colorVisual;
+            
         }
 
         private SpriteVisual CreateExclusionBlendVisual()
@@ -107,7 +146,7 @@ namespace Mango.UI
 
             IGraphicsEffect exclusionBlendEffect = new Microsoft.Graphics.Canvas.Effects.BlendEffect
             {
-                Mode = BlendEffectMode.Exclusion,
+                Mode = BlendEffectMode.Exclusion
 
             };
 

@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>Mango.ColinKiama</id>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <authors>Colin Kiama</authors>
     <owners>Colin Kiama</owners>
     <licenseUrl>https://raw.githubusercontent.com/colinkiama/Mango/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/colinkiama/Mango</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>A library made to make UWP development much easier!</description>
-    <releaseNotes>Fixed bug allowing timer to go past 0</releaseNotes>
+    <releaseNotes>Added more timer events to make the timer easier to use.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>uwp library easy useful productivity productive shortcuts</tags>
   </metadata>

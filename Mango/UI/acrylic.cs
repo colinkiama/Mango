@@ -17,8 +17,15 @@ namespace Mango.UI
         Compositor _compositor;
         SpriteVisual _hostSprite;
 
+        /// <summary>
+        /// Panel where effect will be show in.
+        /// </summary>
         public RelativePanel transparentBox { get; set; }
 
+        /// <summary>
+        /// Create see through window effect inside a panel control.
+        /// </summary>
+        /// <param name="rootOfContent"></param>
         public void createTransparentArea(Panel rootOfContent)
         {
             transparentBox = new RelativePanel();
@@ -45,7 +52,11 @@ namespace Mango.UI
         }
 
         
-
+        /// <summary>
+        /// Resizes the UIEffect when the app window has been resized. Recommended to use in a Page's SizeChanged event.
+        /// </summary>
+        /// <param name="acrylicGlass"></param>
+        /// <param name="newPageSize"></param>
         internal static void updateAcrylicGlassSize(UIEffects acrylicGlass, Size newPageSize)
         {
             if (acrylicGlass._hostSprite != null)

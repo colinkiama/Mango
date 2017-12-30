@@ -82,13 +82,14 @@ namespace Mango.UI
         private void applyMSFTAcrylicEffect(RelativePanel transparentBox, Panel rootOfContent)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(rootOfContent).Compositor;
-            _hostSprite = _compositor.CreateSpriteVisual();
-            _hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            _hostSprite.Opacity = 0.8f;
+          SpriteVisual backdropSprite = _compositor.CreateSpriteVisual();
+            //_hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            //_hostSprite.Opacity = 0.8f;
 
             //CompositionSurfaceBrush noiseBrush = _compositor.CreateSurfaceBrush();
             //LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/acrylicNoise.png"));
             //noiseBrush.Surface = loadedSurface;
+            
 
 
 
@@ -98,11 +99,12 @@ namespace Mango.UI
             _hostSprite.Brush = _compositor.CreateHostBackdropBrush();
 
             ContainerVisual containerVisual = _compositor.CreateContainerVisual();
-            containerVisual.Children.InsertAtTop(_hostSprite);
+            containerVisual.Children.InsertAtBottom(_hostSprite);
             containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
             containerVisual.Opacity = 0.8f;
             containerVisual.IsVisible = true;
-           
+            containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+
 
             //SpriteVisual hostBackdropVisual = CreateHostBackdropVisual();
             //hostBackdropVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
@@ -133,7 +135,7 @@ namespace Mango.UI
             //Last thing to do!!!
 
 
-            ElementCompositionPreview.SetElementChildVisual(rootOfContent, containerVisual);
+            ElementCompositionPreview.SetElementChildVisual(transparentBox, containerVisual);
 
         }
 
@@ -150,22 +152,21 @@ namespace Mango.UI
         private SpriteVisual CreateColorTintOverlay()
         {
             SpriteVisual colorVisual = _compositor.CreateSpriteVisual();
-            colorVisual.Opacity = 1f;
-
             colorVisual.Brush  = _compositor.CreateColorBrush(Colors.Blue);
 
             return colorVisual;
             
         }
 
-        private SpriteVisual CreateExclusionBlendVisual()
+        private SpriteVisual CreateExclusionBlendVisual(IGraphicsEffectSource foreground, IGraphicsEffectSource background)
         {
             SpriteVisual blendVisual = _compositor.CreateSpriteVisual();
-            blendVisual.Opacity = 1f;
 
             IGraphicsEffect exclusionBlendEffect = new Microsoft.Graphics.Canvas.Effects.BlendEffect
             {
-                Mode = BlendEffectMode.Exclusion
+                Mode = BlendEffectMode.Exclusion,
+                Background = background,
+                Foreground = foreground
 
             };
 

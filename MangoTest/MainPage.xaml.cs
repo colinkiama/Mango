@@ -1,4 +1,5 @@
 ﻿using Mango.Fundamentals;
+using Mango.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,7 +29,7 @@ namespace MangoTest
     {
 
         Timer myTimer = new Timer(new TimeSpan(0, 0,10));
-
+        UIEffects acrylic = new UIEffects();
        
 
        
@@ -62,6 +63,8 @@ namespace MangoTest
         {
             myTimer.StartTimer();
             displayTimeLeft();
+            
+            acrylic.createMSFTStyleAcrylicArea(hah);
         }
 
        
@@ -74,6 +77,11 @@ namespace MangoTest
         private void PauseTimerButton_Click(object sender, RoutedEventArgs e)
         {
             myTimer.PauseTimer();
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            acrylic.updateAcrylicGlassSize(acrylic, e.NewSize);
         }
     }
 }

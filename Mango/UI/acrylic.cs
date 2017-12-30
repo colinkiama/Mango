@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas.Effects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Graphics.Effects;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,7 +14,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Mango.UI
 {
-   public sealed partial class UIEffects
+    public sealed partial class UIEffects
     {
         Compositor _compositor;
         SpriteVisual _hostSprite;
@@ -30,8 +32,8 @@ namespace Mango.UI
         {
             transparentBox = new RelativePanel();
             addTransparentBoxToGrid(rootOfContent, transparentBox);
-            applyTransparentEffectToBox(transparentBox,rootOfContent);
-            
+            applyTransparentEffectToBox(transparentBox, rootOfContent);
+
         }
 
         private void applyTransparentEffectToBox(RelativePanel transparentBox, Panel rootOfContent)
@@ -51,7 +53,7 @@ namespace Mango.UI
             rootOfContent.Children.Insert(0, transparentBox);
         }
 
-        
+
         /// <summary>
         /// Resizes the UIEffect when the app window has been resized. Recommended to use in a Page's SizeChanged event.
         /// </summary>
@@ -62,8 +64,88 @@ namespace Mango.UI
             if (acrylicGlass._hostSprite != null)
             {
                 acrylicGlass._hostSprite.Size = newPageSize.ToVector2();
-                
+
             }
+        }
+
+
+        private void applyMSFTAcrylicEffect(RelativePanel transparentBox, Panel rootOfContent)
+        {
+            _compositor = ElementCompositionPreview.GetElementVisual(rootOfContent).Compositor;
+            _hostSprite = _compositor.CreateSpriteVisual();
+            _hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            _hostSprite.Opacity = 0.6f;
+
+            var containerVisual = _compositor.CreateContainerVisual();
+
+            SpriteVisual hostBackdropVisual = CreateHostBackdropVisual();
+            hostBackdropVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            containerVisual.Children.InsertAtBottom(hostBackdropVisual);
+
+
+            SpriteVisual gaussianBlurVisual = CreateGaussianBlurVisual();
+            gaussianBlurVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            containerVisual.Children.InsertAbove(gaussianBlurVisual, hostBackdropVisual);
+
+
+            SpriteVisual exclusionBlendVisual = CreateExclusionBlendVisual();
+            exclusionBlendVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
+            containerVisual.Children.InsertAbove(exclusionBlendVisual, gaussianBlurVisual);
+
+
+
+
+            //Last thing to do!!!
+            ElementCompositionPreview.SetElementChildVisual(transparentBox, _hostSprite);
+
+        }
+
+        private SpriteVisual CreateExclusionBlendVisual()
+        {
+            SpriteVisual blendVisual = _compositor.CreateSpriteVisual();
+            blendVisual.Opacity = 1f;
+
+            IGraphicsEffect exclusionBlendEffect = new Microsoft.Graphics.Canvas.Effects.BlendEffect
+            {
+                Mode = BlendEffectMode.Exclusion,
+
+            };
+
+            CompositionEffectFactory exclusionBlendFactory = _compositor.CreateEffectFactory(exclusionBlendEffect);
+            CompositionEffectBrush exlcusionBrush = exclusionBlendFactory.CreateBrush();
+
+            blendVisual.Brush = exlcusionBrush;
+
+            return blendVisual;
+            
+
+        }
+
+        private SpriteVisual CreateGaussianBlurVisual()
+        {
+            GaussianBlurEffect blurEffect = new GaussianBlurEffect()
+            {
+                Name = "Blur",
+                BlurAmount = 20.0f,
+                BorderMode = EffectBorderMode.Hard,
+                Source = new CompositionEffectSourceParameter("BlurSource")
+            };
+
+            CompositionEffectFactory blurEffectFactory = _compositor.CreateEffectFactory(blurEffect);
+            CompositionEffectBrush blurBrush = blurEffectFactory.CreateBrush();
+
+            SpriteVisual blurSpriteVisual = _compositor.CreateSpriteVisual();
+            blurSpriteVisual.Brush = blurBrush;
+            blurSpriteVisual.Opacity = 1f;
+
+            return blurSpriteVisual;
+        }
+
+        private SpriteVisual CreateHostBackdropVisual()
+        {
+            var hostBackdropSprite = _compositor.CreateSpriteVisual();
+            hostBackdropSprite.Opacity = 1f;
+            return hostBackdropSprite;
         }
     }
 }

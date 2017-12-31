@@ -61,10 +61,10 @@ namespace MangoTest
 
         private void StartTimerButton_Click(object sender, RoutedEventArgs e)
         {
-            myTimer.StartTimer();
-            displayTimeLeft();
+            //myTimer.StartTimer();
+            //displayTimeLeft();
             
-            acrylic.createMSFTStyleAcrylicArea(hah);
+            acrylic.createTransparentArea(hah);
         }
 
        

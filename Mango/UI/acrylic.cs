@@ -20,7 +20,6 @@ namespace Mango.UI
     {
         Compositor _compositor;
         SpriteVisual _hostSprite;
-
         /// <summary>
         /// Panel where effect will be show in.
         /// </summary>
@@ -39,12 +38,7 @@ namespace Mango.UI
         }
 
 
-        public void createMSFTStyleAcrylicArea(Panel rootOfContent)
-        {
-            transparentBox = new RelativePanel();
-            addTransparentBoxToGrid(rootOfContent, transparentBox);
-            applyMSFTAcrylicEffect(transparentBox, rootOfContent);
-        }
+       
 
         private void applyTransparentEffectToBox(RelativePanel transparentBox, Panel rootOfContent)
         {
@@ -76,135 +70,11 @@ namespace Mango.UI
                 acrylicGlass._hostSprite.Size = newPageSize.ToVector2();
 
             }
-        }
 
-
-        private void applyMSFTAcrylicEffect(RelativePanel transparentBox, Panel rootOfContent)
-        {
-            _compositor = ElementCompositionPreview.GetElementVisual(rootOfContent).Compositor;
-          SpriteVisual backdropSprite = _compositor.CreateSpriteVisual();
-            //_hostSprite.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            //_hostSprite.Opacity = 0.8f;
-
-            //CompositionSurfaceBrush noiseBrush = _compositor.CreateSurfaceBrush();
-            //LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/acrylicNoise.png"));
-            //noiseBrush.Surface = loadedSurface;
-            
-
-
-
-
-
-
-            _hostSprite.Brush = _compositor.CreateHostBackdropBrush();
-
-            ContainerVisual containerVisual = _compositor.CreateContainerVisual();
-            containerVisual.Children.InsertAtBottom(_hostSprite);
-            containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            containerVisual.Opacity = 0.8f;
-            containerVisual.IsVisible = true;
-            containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-
-
-            //SpriteVisual hostBackdropVisual = CreateHostBackdropVisual();
-            //hostBackdropVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            //containerVisual.Children.InsertAtTop(hostBackdropVisual);
-
-
-            //SpriteVisual gaussianBlurVisual = CreateGaussianBlurVisual();
-            //gaussianBlurVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            //containerVisual.Children.InsertAbove(gaussianBlurVisual, hostBackdropVisual);
-
-
-            ////SpriteVisual exclusionBlendVisual = CreateExclusionBlendVisual();
-            ////exclusionBlendVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            ////containerVisual.Children.InsertAbove(exclusionBlendVisual, gaussianBlurVisual);
-
-            //SpriteVisual colorTintVisual = CreateColorTintOverlay();
-            //colorTintVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            ////containerVisual.Children.InsertAbove(colorTintVisual, exclusionBlendVisual);
-            //containerVisual.Children.InsertAbove(colorTintVisual, gaussianBlurVisual);
-
-            //SpriteVisual acrylicNoiseVisual = CreateAcrylicNoiseVisual();
-            //acrylicNoiseVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-            //containerVisual.Children.InsertAbove(acrylicNoiseVisual, colorTintVisual);
-
-            //containerVisual.Opacity = 0.8f;
-            //containerVisual.Size = new Vector2((float)transparentBox.ActualWidth, (float)transparentBox.ActualHeight);
-
-            //Last thing to do!!!
-
-
-            ElementCompositionPreview.SetElementChildVisual(transparentBox, containerVisual);
-
-        }
-
-        private SpriteVisual CreateAcrylicNoiseVisual()
-        {
-            CompositionSurfaceBrush noiseBrush = _compositor.CreateSurfaceBrush();
-            LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/acrylicNoise.png"));
-            noiseBrush.Surface = loadedSurface;
-
-            SpriteVisual noiseVisual = _compositor.CreateSpriteVisual();
-            return noiseVisual;
-        }
-
-        private SpriteVisual CreateColorTintOverlay()
-        {
-            SpriteVisual colorVisual = _compositor.CreateSpriteVisual();
-            colorVisual.Brush  = _compositor.CreateColorBrush(Colors.Blue);
-
-            return colorVisual;
             
         }
 
-        private SpriteVisual CreateExclusionBlendVisual(IGraphicsEffectSource foreground, IGraphicsEffectSource background)
-        {
-            SpriteVisual blendVisual = _compositor.CreateSpriteVisual();
 
-            IGraphicsEffect exclusionBlendEffect = new Microsoft.Graphics.Canvas.Effects.BlendEffect
-            {
-                Mode = BlendEffectMode.Exclusion,
-                Background = background,
-                Foreground = foreground
-
-            };
-
-            CompositionEffectFactory exclusionBlendFactory = _compositor.CreateEffectFactory(exclusionBlendEffect);
-            CompositionEffectBrush exlcusionBrush = exclusionBlendFactory.CreateBrush();
-
-            blendVisual.Brush = exlcusionBrush;
-
-            return blendVisual;
-            
-
-        }
-
-        private SpriteVisual CreateGaussianBlurVisual()
-        {
-            GaussianBlurEffect blurEffect = new GaussianBlurEffect()
-            {
-                Name = "Blur",
-                BlurAmount = 20.0f,
-                BorderMode = EffectBorderMode.Hard,
-                Source = new CompositionEffectSourceParameter("BlurSource")
-            };
-
-            CompositionEffectFactory blurEffectFactory = _compositor.CreateEffectFactory(blurEffect);
-            CompositionEffectBrush blurBrush = blurEffectFactory.CreateBrush();
-
-            SpriteVisual blurSpriteVisual = _compositor.CreateSpriteVisual();
-            blurSpriteVisual.Brush = blurBrush;
-            blurSpriteVisual.Opacity = 1f;
-
-            return blurSpriteVisual;
-        }
-
-        private SpriteVisual CreateHostBackdropVisual()
-        {
-            var hostBackdropSprite = _compositor.CreateSpriteVisual();
-            hostBackdropSprite.Opacity = 1f;
-            return hostBackdropSprite;
-        }
+ 
     }
 }

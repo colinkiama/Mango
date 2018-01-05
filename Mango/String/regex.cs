@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mango.String
 {
-    public class regex
+    public sealed class regex
     {
 
     }
